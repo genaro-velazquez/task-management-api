@@ -49,8 +49,25 @@ export class TasksService {
 
     // Filtro por fecha de vencimiento
     if (filters.fechaVencimiento) {
+      console.log('🔍 Fecha recibida:', filters.fechaVencimiento);
+      
       const fecha = new Date(filters.fechaVencimiento);
-      queryBuilder.andWhere('DATE(task.fechaVencimiento) = DATE(:fecha)', { fecha });
+      const fechaInicio = new Date(fecha);
+      fechaInicio.setUTCHours(0, 0, 0, 0);
+      
+      const fechaFin = new Date(fecha);
+      fechaFin.setUTCHours(23, 59, 59, 999);
+      
+      console.log('🔍 fechaInicio:', fechaInicio);
+      console.log('🔍 fechaFin:', fechaFin);
+      console.log('🔍 Aplicando filtro de fecha...');
+      
+      queryBuilder.andWhere(
+        'task.fechaVencimiento >= :fechaInicio AND task.fechaVencimiento <= :fechaFin',
+        { fechaInicio, fechaFin }
+      );
+      
+      console.log('🔍 Filtro aplicado');
     }
 
     // Filtro por estado
