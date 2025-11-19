@@ -1,19 +1,17 @@
+import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe, INestApplication } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../src/app.module';
+import * as dns from 'dns';
 
-let app: INestApplication | null = null;
+// FORZAR IPv4 para Vercel
+dns.setDefaultResultOrder('ipv4first');
 
-async function bootstrap() {
-  if (!app) {
-    app = await NestFactory.create(AppModule);
+export default async (req: any, res: any) => {
+  try {
+    const app = await NestFactory.create(AppModule);
     
-    app.enableCors({
-      origin: '*',
-      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-      credentials: true,
-    });
-
+    app.enableCors();
     app.useGlobalPipes(new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
@@ -21,11 +19,15 @@ async function bootstrap() {
     }));
 
     await app.init();
+    
+    const expressApp = app.getHttpAdapter().getInstance();
+    return expressApp(req, res);
+  } catch (error: unknown) {
+    console.error('❌ Error:', error);
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    return res.status(500).json({ 
+      error: 'Internal Server Error',
+      message: message
+    });
   }
-  return app;
-}
-
-export default async (req: any, res: any) => {
-  const server = await bootstrap();
-  return server.getHttpAdapter().getInstance()(req, res);
 };
