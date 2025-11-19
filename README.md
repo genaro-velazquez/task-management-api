@@ -131,6 +131,46 @@ En tu proyecto de Vercel:
    - `DATABASE_URL`
    - `NODE_ENV=production`
 
+**⚠️ Importante para Supabase:**
+- Usar la URL de **Connection Pooling** (puerto 6543), no la directa (puerto 5432)
+- Formato: `postgresql://user:password@aws-0-region.pooler.supabase.com:6543/postgres?pgbouncer=true`
+- Vercel no soporta IPv6, el pooling resuelve esto
+
+## 🚀 Estado del Deployment
+
+### ✅ Desarrollo
+- Funcionando correctamente en `localhost:3000`
+- Base de datos sincronizada automáticamente
+
+### ❌ Producción (Intento fallido)
+Se intentó desplegar en **Vercel** con **Supabase PostgreSQL**, pero se presentaron errores:
+
+#### Error 1: `ENETUNREACH - Network is unreachable`
+**Causa:** Vercel no soporta IPv6 nativamente
+- **Solución intentada:** Usar connection pooling de Supabase (puerto 6543)
+- **Resultado:** Error resuelto parcialmente
+
+#### Error 2: `Tenant or user not found`
+**Causa:** Credenciales de base de datos incorrectas
+- **Problema:** Usuario `postgres` no coincide o contraseña inválida
+- **Estado:** Requiere validación de credenciales
+
+### 🔄 Próximas Acciones
+1. **Opción A - Corregir Supabase:**
+   - [ ] Resetear contraseña del usuario `postgres` en Supabase
+   - [ ] Actualizar `DATABASE_URL` en Vercel con la nueva contraseña
+   - [ ] Redeployar desde Vercel
+
+2. **Opción B - Migrar a Railway (Recomendado):**
+   - [ ] Railway tiene mejor soporte para PostgreSQL
+   - [ ] Configuración más simple para Node.js/NestJS
+   - [ ] No requiere configurar pooling manualmente
+
+### 📝 Notas Técnicas
+- `synchronize: true` en desarrollo crea tablas automáticamente
+- En producción usar `synchronize: false` con migraciones
+- CORS está habilitado para desarrollo (`origin: '*'`)
+
 ## 📚 Endpoints
 
 ### Usuarios
