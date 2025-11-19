@@ -1,11 +1,12 @@
+import * as dns from 'dns';
+
+// FORZAR IPv4 ANTES DE TODO
+dns.setDefaultResultOrder('ipv4first');
+
 import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../src/app.module';
-import * as dns from 'dns';
-
-// FORZAR IPv4 para Vercel
-dns.setDefaultResultOrder('ipv4first');
 
 export default async (req: any, res: any) => {
   try {
@@ -22,12 +23,11 @@ export default async (req: any, res: any) => {
     
     const expressApp = app.getHttpAdapter().getInstance();
     return expressApp(req, res);
-  } catch (error: unknown) {
-    console.error('❌ Error:', error);
-    const message = error instanceof Error ? error.message : 'Unknown error';
+  } catch (err) {
+    console.error('❌ Error:', err);
     return res.status(500).json({ 
       error: 'Internal Server Error',
-      message: message
+      message: String(err)
     });
   }
 };
