@@ -142,29 +142,13 @@ En tu proyecto de Vercel:
 - Funcionando correctamente en `localhost:3000`
 - Base de datos sincronizada automáticamente
 
-### ❌ Producción (Intento fallido)
-Se intentó desplegar en **Vercel** con **Supabase PostgreSQL**, pero se presentaron errores:
+### ✅ Producción (ACTIVO)
+- URL: https://task-management-api-flax.vercel.app
+- Plataforma: Vercel
+- Base de datos: Supabase PostgreSQL
+- Connection pooling: Habilitado
 
-#### Error 1: `ENETUNREACH - Network is unreachable`
-**Causa:** Vercel no soporta IPv6 nativamente
-- **Solución intentada:** Usar connection pooling de Supabase (puerto 6543)
-- **Resultado:** Error resuelto parcialmente
-
-#### Error 2: `Tenant or user not found`
-**Causa:** Credenciales de base de datos incorrectas
-- **Problema:** Usuario `postgres` no coincide o contraseña inválida
-- **Estado:** Requiere validación de credenciales
-
-### 🔄 Próximas Acciones
-1. **Opción A - Corregir Supabase:**
-   - [ ] Resetear contraseña del usuario `postgres` en Supabase
-   - [ ] Actualizar `DATABASE_URL` en Vercel con la nueva contraseña
-   - [ ] Redeployar desde Vercel
-
-2. **Opción B - Migrar a Railway (Recomendado):**
-   - [ ] Railway tiene mejor soporte para PostgreSQL
-   - [ ] Configuración más simple para Node.js/NestJS
-   - [ ] No requiere configurar pooling manualmente
+**Nota:** Usa el puerto 5432 del pooler, no 6543
 
 ### 📝 Notas Técnicas
 - `synchronize: true` en desarrollo crea tablas automáticamente
